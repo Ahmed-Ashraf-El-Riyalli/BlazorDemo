@@ -1,0 +1,39 @@
+﻿@page "/Products"
+@inject IUnitOfWork<Product> ProductService
+
+<div class="container">
+
+    <div class="row">
+        @if (productList != null)
+        {
+            @foreach (var product in productList)
+            {
+                <div class="col-sm-4 p-2">
+                    <ProductItem Product="product" MinDescription="minDescription" />
+                </div>
+            }
+        }
+    </div>
+</div>
+
+@code {
+
+    private IEnumerable<ProductIndexViewModel> productList;
+    private int minDescription;
+
+    protected override async Task OnInitializedAsync()
+    {
+        productList = await ProductService.Entity.GetAllWithOptions(p =>
+        new ProductIndexViewModel()
+        {
+            ID = p.ID,
+            Name = p.Name,
+            Price = p.Price,
+            ImageUrl = p.ImageUrl,
+            Description = p.Description
+        });
+
+        minDescription = productList.Min(p => p.Description.Length);
+    }
+
+}

@@ -1,0 +1,52 @@
+﻿<div class="card">
+    <div class="d-flex justify-content-center p-2">
+        <img src="@Product.ImageUrl" height="350" />
+    </div>
+
+    <div class="card-body">
+        @if (MinDescription != 0)
+        {
+            // if it was the products index page
+
+            <h5 class="card-title">
+                <a href="/Product/@Product.ID">@Product.Name</a>
+            </h5>
+
+            <p class="card-text">@Product.Description.Substring(0, MinDescription)</p>
+        }
+        else
+        {
+            // if it was the product details page
+
+            <h5 class="card-title">@Product.Name</h5>
+
+            <p class="card-text">@Product.Description</p>
+        }
+
+        <p class="text-secondary text-center h2 font-weight-bold">@Product.Price.ToString(currencyFormat)</p>
+
+        @ChildContent
+
+        <a href="#" class="btn btn-danger w-100" @onclick:preventDefault>
+            <i class="fas fa-shopping-cart"></i>
+            Add To Cart
+        </a>
+    </div>
+</div>
+
+
+@code {
+
+    [Parameter]
+    public ProductIndexViewModel Product { get; set; }
+
+    [Parameter]
+    public int MinDescription { get; set; }
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [CascadingParameter(Name = "CurrencyFormat")]
+    private string currencyFormat { get; set; }
+
+}

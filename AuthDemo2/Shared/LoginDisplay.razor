@@ -1,0 +1,45 @@
+﻿@inject UserManager<ApplicationUser> UserManager
+
+<AuthorizeView>
+    <Authorized>
+        @{
+            var profilePicture = GetProfilePicture().Result;
+
+            if (profilePicture != null)
+            {
+                <img alt="Profile Picture" class="avatar rounded-circle"
+                     src="data:image/*;base64, @Convert.ToBase64String(profilePicture)" />
+            }
+        }
+
+        <a href="Identity/Account/Manage">Hello, @context.User.Identity.Name!</a>
+        <form method="post" action="Identity/Account/LogOut">
+            <button type="submit" class="nav-link btn btn-link">Log out</button>
+        </form>
+    </Authorized>
+    <NotAuthorized>
+        <a href="Identity/Account/Register">Register</a>
+        <a href="Identity/Account/Login">Log in</a>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+
+    private AuthenticationState authenticationState;
+
+    [CascadingParameter]
+    public Task<AuthenticationState> AuthenticationState { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        authenticationState = await AuthenticationState;
+    }
+
+    private Task<byte[]> GetProfilePicture()
+    {
+        return Task.FromResult(
+            UserManager.GetUserAsync(authenticationState.User)
+                                    .Result.ProfilePicture);
+    }
+
+}

@@ -1,0 +1,36 @@
+﻿@page "/"
+
+<h1>Hello, world!</h1>
+
+Welcome to your new app.
+
+<SurveyPrompt Title="How is Blazor working for you?" />
+
+@if (authenticationState != null)
+{
+    if (authenticationState.User.Identity.IsAuthenticated)
+    {
+        <p>Hello @authenticationState.User.Identity.Name</p>
+
+        foreach (var claim in authenticationState.User.Claims)
+        {
+            <p>Claim Type: @claim.Type</p>
+            <p>Claim Value: @claim.Value</p>
+        }
+    }
+}
+
+@code {
+
+    private AuthenticationState authenticationState;
+
+    [CascadingParameter]
+    public Task<AuthenticationState> AuthenticationState { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        authenticationState = await AuthenticationState;
+    }
+
+
+}

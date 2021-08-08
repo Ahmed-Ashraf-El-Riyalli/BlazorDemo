@@ -1,0 +1,44 @@
+﻿@page "/Product/{id:int}"
+@inject IUnitOfWork<Product> ProductService
+
+
+@if (productIndex != null)
+{
+    <ProductItem Product="productIndex">
+        <p>@((MarkupString) productDetails.Specifications)</p>
+    </ProductItem>
+}
+
+@code {
+
+    private ProductDetailsViewModel productDetails;
+    private ProductIndexViewModel productIndex;
+
+    [Parameter]
+    public int ID { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        productDetails = await ProductService.Entity
+            .GetOneWithOptions(p => p.ID == ID, p =>
+            new ProductDetailsViewModel()
+            {
+                ID = p.ID,
+                Name = p.Name,
+                Price = p.Price,
+                ImageUrl = p.ImageUrl,
+                Description = p.Description,
+                Specifications = p.Specifications
+            });
+
+        productIndex = new ProductIndexViewModel()
+        {
+            ID = productDetails.ID,
+            Name = productDetails.Name,
+            Price = productDetails.Price,
+            ImageUrl = productDetails.ImageUrl,
+            Description = productDetails.Description
+        };
+    }
+
+}
